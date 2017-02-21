@@ -2,14 +2,15 @@ package pool
 
 import (
 	"fmt"
-	"github.com/open-falcon/common/model"
-	"github.com/toolkits/pool"
 	"io"
 	"log"
 	"net"
 	"net/rpc"
 	"sync"
 	"time"
+
+	"github.com/open-falcon/falcon-plus/common/model"
+	"github.com/toolkits/pool"
 )
 
 type RpcClient struct {
@@ -64,7 +65,7 @@ func (this *SafeRpcConnPools) Call(addr, method string, args interface{}, resp i
 	rpcClient := conn.(RpcClient)
 	callTimeout := time.Duration(this.CallTimeout) * time.Millisecond
 
-	done := make(chan error)
+	done := make(chan error, 1)
 	go func() {
 		done <- rpcClient.Call(method, args, resp)
 	}()

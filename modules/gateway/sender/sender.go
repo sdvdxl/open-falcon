@@ -4,12 +4,12 @@ import (
 	"log"
 
 	pfc "github.com/niean/goperfcounter"
-	cmodel "github.com/open-falcon/common/model"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
 	nlist "github.com/toolkits/container/list"
 	nproc "github.com/toolkits/proc"
 
-	"github.com/open-falcon/gateway/g"
-	cpool "github.com/open-falcon/gateway/sender/conn_pool"
+	backend "github.com/open-falcon/falcon-plus/common/backend_pool"
+	"github.com/open-falcon/falcon-plus/modules/gateway/g"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 
 var (
 	SenderQueue     = nlist.NewSafeListLimited(DefaultSendQueueMaxSize)
-	SenderConnPools *cpool.SafeRpcConnPools
+	SenderConnPools *backend.SafeRpcConnPools
 
 	TransferMap         = make(map[string]string, 0)
 	TransferHostnames   = make([]string, 0)
@@ -68,6 +68,6 @@ func initConnPools() {
 	}
 
 	// init conn pools
-	SenderConnPools = cpool.CreateSafeRpcConnPools(cfg.Transfer.MaxConns, cfg.Transfer.MaxIdle,
-		cfg.Transfer.ConnTimeout, cfg.Transfer.CallTimeout, addrs)
+	SenderConnPools = backend.CreateSafeJsonrpcConnPools(int(cfg.Transfer.MaxConns), int(cfg.Transfer.MaxIdle),
+		int(cfg.Transfer.ConnTimeout), int(cfg.Transfer.CallTimeout), addrs)
 }

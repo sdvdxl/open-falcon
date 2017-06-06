@@ -41,7 +41,7 @@ CREATE TABLE `dashboard_graph` (
   `falcon_tags` varchar(512) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `idx_sid` (`screen_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4626 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -57,8 +57,9 @@ CREATE TABLE `dashboard_screen` (
   `name` char(128) NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_pid` (`pid`)
-) ENGINE=InnoDB AUTO_INCREMENT=952 DEFAULT CHARSET=utf8;
+  KEY `idx_pid` (`pid`),
+  UNIQUE KEY `idx_pid_n` (`pid`,`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +77,7 @@ CREATE TABLE `tmp_graph` (
   `time_` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_ck` (`ck`)
-) ENGINE=InnoDB AUTO_INCREMENT=365189 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

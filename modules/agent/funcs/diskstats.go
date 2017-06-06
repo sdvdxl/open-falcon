@@ -2,7 +2,7 @@ package funcs
 
 import (
 	"fmt"
-	"github.com/open-falcon/common/model"
+	"github.com/open-falcon/falcon-plus/common/model"
 	"github.com/toolkits/nux"
 	"log"
 	"strings"
@@ -119,7 +119,7 @@ func IOStatsMetrics() (L []*model.MetricValue) {
 	dsLock.RLock()
 	defer dsLock.RUnlock()
 
-	for device, _ := range diskStatsMap {
+	for device := range diskStatsMap {
 		if !ShouldHandleDevice(device) {
 			continue
 		}
@@ -164,7 +164,7 @@ func IOStatsForPage() (L [][]string) {
 	dsLock.RLock()
 	defer dsLock.RUnlock()
 
-	for device, _ := range diskStatsMap {
+	for device := range diskStatsMap {
 		if !ShouldHandleDevice(device) {
 			continue
 		}

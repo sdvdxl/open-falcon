@@ -2,16 +2,19 @@ package api
 
 import (
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"math"
 	"time"
 
-	cmodel "github.com/open-falcon/common/model"
-	cutils "github.com/open-falcon/common/utils"
-	"github.com/open-falcon/graph/g"
-	"github.com/open-falcon/graph/index"
-	"github.com/open-falcon/graph/proc"
-	"github.com/open-falcon/graph/rrdtool"
-	"github.com/open-falcon/graph/store"
+	pfc "github.com/niean/goperfcounter"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
+	cutils "github.com/open-falcon/falcon-plus/common/utils"
+
+	"github.com/open-falcon/falcon-plus/modules/graph/g"
+	"github.com/open-falcon/falcon-plus/modules/graph/index"
+	"github.com/open-falcon/falcon-plus/modules/graph/proc"
+	"github.com/open-falcon/falcon-plus/modules/graph/rrdtool"
+	"github.com/open-falcon/falcon-plus/modules/graph/store"
 )
 
 type Graph int
@@ -63,6 +66,25 @@ func handleItems(items []*cmodel.GraphItem) {
 		if items[i] == nil {
 			continue
 		}
+
+		endpoint := items[i].Endpoint
+		if !g.IsValidString(endpoint) {
+			if cfg.Debug {
+				log.Printf("invalid endpoint: %s", endpoint)
+			}
+			pfc.Meter("invalidEnpoint", 1)
+			continue
+		}
+
+		counter := cutils.Counter(items[i].Metric, items[i].Tags)
+		if !g.IsValidString(counter) {
+			if cfg.Debug {
+				log.Printf("invalid counter: %s/%s", endpoint, counter)
+			}
+			pfc.Meter("invalidCounter", 1)
+			continue
+		}
+
 		dsType := items[i].DsType
 		step := items[i].Step
 		checksum := items[i].Checksum()
@@ -138,7 +160,9 @@ func (this *Graph) Query(param cmodel.GraphQueryParam, resp *cmodel.GraphQueryRe
 		datas_size = len(datas)
 	} else {
 		// read data from rrd file
-		datas, _ = rrdtool.Fetch(filename, param.ConsolFun, start_ts, end_ts, step)
+		// 从RRD中获取数据不包含起始时间点
+		// 例: start_ts=1484651400,step=60,则第一个数据时间为1484651460)
+		datas, _ = rrdtool.Fetch(filename, param.ConsolFun, start_ts-int64(step), end_ts, step)
 		datas_size = len(datas)
 	}
 
@@ -249,6 +273,9 @@ func (this *Graph) Query(param cmodel.GraphQueryParam, resp *cmodel.GraphQueryRe
 
 		// fmt result
 		ret_size := int((end_ts - start_ts) / int64(step))
+		if dsType == g.GAUGE {
+			ret_size += 1
+		}
 		ret := make([]*cmodel.RRDData, ret_size, ret_size)
 		mergedIdx := 0
 		ts = start_ts
@@ -267,6 +294,29 @@ func (this *Graph) Query(param cmodel.GraphQueryParam, resp *cmodel.GraphQueryRe
 _RETURN_OK:
 	// statistics
 	proc.GraphQueryItemCnt.IncrBy(int64(len(resp.Values)))
+	return nil
+}
+
+//从内存索引、MySQL中删除counter，并从磁盘上删除对应rrd文件
+func (this *Graph) Delete(params []*cmodel.GraphDeleteParam, resp *cmodel.GraphDeleteResp) error {
+	resp = &cmodel.GraphDeleteResp{}
+	for _, param := range params {
+		err, tags := cutils.SplitTagsString(param.Tags)
+		if err != nil {
+			log.Error("invalid tags:", param.Tags, "error:", err)
+			continue
+		}
+
+		var item *cmodel.GraphItem = &cmodel.GraphItem{
+			Endpoint: param.Endpoint,
+			Metric:   param.Metric,
+			Tags:     tags,
+			DsType:   param.DsType,
+			Step:     param.Step,
+		}
+		index.RemoveItem(item)
+	}
+
 	return nil
 }
 

@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	cmodel "github.com/open-falcon/common/model"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
 
-	"github.com/open-falcon/gateway/g"
-	trpc "github.com/open-falcon/gateway/receiver/rpc"
+	trpc "github.com/open-falcon/falcon-plus/modules/gateway/receiver/rpc"
 )
 
 func configApiHttpRoutes() {
@@ -25,7 +24,7 @@ func configApiHttpRoutes() {
 			return
 		}
 
-		reply := &g.TransferResp{}
+		reply := &cmodel.TransferResponse{}
 		trpc.RecvMetricValues(metrics, reply, "http")
 
 		RenderDataJson(w, reply)

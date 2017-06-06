@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/open-falcon/agent/cron"
-	"github.com/open-falcon/agent/funcs"
-	"github.com/open-falcon/agent/g"
-	"github.com/open-falcon/agent/http"
+	"github.com/open-falcon/falcon-plus/modules/agent/cron"
+	"github.com/open-falcon/falcon-plus/modules/agent/funcs"
+	"github.com/open-falcon/falcon-plus/modules/agent/g"
+	"github.com/open-falcon/falcon-plus/modules/agent/http"
 	"os"
 )
 
@@ -30,8 +30,14 @@ func main() {
 
 	g.ParseConfig(*cfg)
 
+	if g.Config().Debug {
+		g.InitLog("debug")
+	} else {
+		g.InitLog("info")
+	}
+
 	g.InitRootDir()
-	g.InitLocalIps()
+	g.InitLocalIp()
 	g.InitRpcClients()
 
 	funcs.BuildMappers()

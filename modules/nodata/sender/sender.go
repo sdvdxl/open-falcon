@@ -8,29 +8,19 @@ import (
 	"net/http"
 	"time"
 
-	cmodel "github.com/open-falcon/common/model"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
 	tsema "github.com/toolkits/concurrent/semaphore"
 	"github.com/toolkits/container/nmap"
 	thttpclient "github.com/toolkits/http/httpclient"
 	ttime "github.com/toolkits/time"
 
-	"github.com/open-falcon/nodata/config"
-	"github.com/open-falcon/nodata/g"
+	"github.com/open-falcon/falcon-plus/modules/nodata/g"
 )
 
 var (
 	MockMap = nmap.NewSafeMap()
 	sema    = tsema.NewSemaphore(1)
 )
-
-func Start() {
-	if !g.Config().Sender.Enabled {
-		log.Println("sender.Start warning, not enabled")
-		return
-	}
-	startGaussCron()
-	log.Println("sender.Start ok")
-}
 
 func AddMock(key string, endpoint string, metric string, tags string, ts int64, dstype string, step int64, value interface{}) {
 	item := &cmodel.JsonMetaData{metric, endpoint, ts, step, value, dstype, tags}
@@ -68,34 +58,6 @@ func SendMockOnce() int {
 }
 
 func sendMock() (cnt int, errt error) {
-	// check nodata flood
-	cfgsize := config.Size()
-	ndsize := MockMap.Size()
-	if cfgsize < 1 {
-		return
-	}
-
-	rate := int32(100 * ndsize / cfgsize)
-	threshold := getThreshold()
-	if g.Config().Debug {
-		log.Printf("nodata threshold: %d", threshold)
-	}
-	// statistics
-	g.FloodRate.SetCnt(int64(rate))
-	g.Threshold.SetCnt(int64(threshold))
-
-	if g.Config().Sender.Block.Enabled {
-		if rate > threshold || g.Config().Sender.Block.SetBlock { // nodata flooding, blocking
-			log.Printf("nodata blocking: flood rate %d, threshold %d", int(rate), int(threshold))
-			// statistics
-			g.Blocking.SetCnt(1)
-			// clear send buffer
-			MockMap.Clear()
-			return 0, nil
-		}
-	}
-	// statistics
-	g.Blocking.SetCnt(0)
 
 	cfg := g.Config().Sender
 	batch := int(cfg.Batch)

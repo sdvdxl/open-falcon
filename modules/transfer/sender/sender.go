@@ -2,10 +2,11 @@ package sender
 
 import (
 	"fmt"
-	cmodel "github.com/open-falcon/common/model"
-	"github.com/open-falcon/transfer/g"
-	"github.com/open-falcon/transfer/proc"
-	cpool "github.com/open-falcon/transfer/sender/conn_pool"
+	backend "github.com/open-falcon/falcon-plus/common/backend_pool"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
+	"github.com/open-falcon/falcon-plus/modules/transfer/g"
+	"github.com/open-falcon/falcon-plus/modules/transfer/proc"
+	rings "github.com/toolkits/consistent/rings"
 	nlist "github.com/toolkits/container/list"
 	"log"
 )
@@ -22,8 +23,8 @@ var (
 // 服务节点的一致性哈希环
 // pk -> node
 var (
-	JudgeNodeRing *ConsistentHashNodeRing
-	GraphNodeRing *ConsistentHashNodeRing
+	JudgeNodeRing *rings.ConsistentHashNodeRing
+	GraphNodeRing *rings.ConsistentHashNodeRing
 )
 
 // 发送缓存队列
@@ -37,9 +38,9 @@ var (
 // 连接池
 // node_address -> connection_pool
 var (
-	JudgeConnPools     *cpool.SafeRpcConnPools
-	TsdbConnPoolHelper *cpool.TsdbConnPoolHelper
-	GraphConnPools     *cpool.SafeRpcConnPools
+	JudgeConnPools     *backend.SafeRpcConnPools
+	TsdbConnPoolHelper *backend.TsdbConnPoolHelper
+	GraphConnPools     *backend.SafeRpcConnPools
 )
 
 // 初始化数据发送服务, 在main函数中调用

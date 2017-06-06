@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	"github.com/open-falcon/transfer/g"
+	"github.com/open-falcon/falcon-plus/modules/transfer/g"
 	"log"
 	"net"
 	"net/rpc"
@@ -35,7 +35,6 @@ func StartRpc() {
 			log.Println("listener.Accept occur error:", err)
 			continue
 		}
-		// go rpc.ServeConn(conn)
 		go server.ServeCodec(jsonrpc.NewServerCodec(conn))
 	}
 }

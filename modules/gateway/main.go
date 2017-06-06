@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/open-falcon/gateway/g"
-	"github.com/open-falcon/gateway/http"
-	"github.com/open-falcon/gateway/receiver"
-	"github.com/open-falcon/gateway/sender"
+	"github.com/open-falcon/falcon-plus/modules/gateway/g"
+	"github.com/open-falcon/falcon-plus/modules/gateway/http"
+	"github.com/open-falcon/falcon-plus/modules/gateway/receiver"
+	"github.com/open-falcon/falcon-plus/modules/gateway/sender"
 )
 
 func main() {
@@ -23,6 +23,12 @@ func main() {
 
 	// global config
 	g.ParseConfig(*cfg)
+
+	if g.Config().Debug {
+		g.InitLog("debug")
+	} else {
+		g.InitLog("info")
+	}
 
 	sender.Start()
 	receiver.Start()

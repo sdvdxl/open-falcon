@@ -38,18 +38,20 @@ type HttpConfig struct {
 
 type CollectorConfig struct {
 	IfacePrefix []string `json:"ifacePrefix"`
+	MountPoint  []string `json:"mountPoint"`
 }
 
 type GlobalConfig struct {
-	Debug         bool             `json:"debug"`
-	Hostname      string           `json:"hostname"`
-	IP            string           `json:"ip"`
-	Plugin        *PluginConfig    `json:"plugin"`
-	Heartbeat     *HeartbeatConfig `json:"heartbeat"`
-	Transfer      *TransferConfig  `json:"transfer"`
-	Http          *HttpConfig      `json:"http"`
-	Collector     *CollectorConfig `json:"collector"`
-	IgnoreMetrics map[string]bool  `json:"ignore"`
+	Debug         bool              `json:"debug"`
+	Hostname      string            `json:"hostname"`
+	IP            string            `json:"ip"`
+	Plugin        *PluginConfig     `json:"plugin"`
+	Heartbeat     *HeartbeatConfig  `json:"heartbeat"`
+	Transfer      *TransferConfig   `json:"transfer"`
+	Http          *HttpConfig       `json:"http"`
+	Collector     *CollectorConfig  `json:"collector"`
+	DefaultTags   map[string]string `json:"default_tags"`
+	IgnoreMetrics map[string]bool   `json:"ignore"`
 }
 
 var (
@@ -84,8 +86,8 @@ func IP() string {
 		return ip
 	}
 
-	if len(LocalIps) > 0 {
-		ip = LocalIps[0]
+	if len(LocalIp) > 0 {
+		ip = LocalIp
 	}
 
 	return ip

@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/open-falcon/nodata/collector"
-	"github.com/open-falcon/nodata/config"
-	"github.com/open-falcon/nodata/g"
-	"github.com/open-falcon/nodata/http"
-	"github.com/open-falcon/nodata/judge"
-	"github.com/open-falcon/nodata/sender"
+	"github.com/open-falcon/falcon-plus/modules/nodata/collector"
+	"github.com/open-falcon/falcon-plus/modules/nodata/config"
+	"github.com/open-falcon/falcon-plus/modules/nodata/g"
+	"github.com/open-falcon/falcon-plus/modules/nodata/http"
+	"github.com/open-falcon/falcon-plus/modules/nodata/judge"
 )
 
 func main() {
@@ -39,8 +38,6 @@ func main() {
 	collector.Start()
 	// judge
 	judge.Start()
-	// sender
-	sender.Start()
 
 	// http
 	http.Start()

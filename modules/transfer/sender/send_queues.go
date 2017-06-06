@@ -1,13 +1,13 @@
 package sender
 
 import (
-	"github.com/open-falcon/transfer/g"
+	"github.com/open-falcon/falcon-plus/modules/transfer/g"
 	nlist "github.com/toolkits/container/list"
 )
 
 func initSendQueues() {
 	cfg := g.Config()
-	for node, _ := range cfg.Judge.Cluster {
+	for node := range cfg.Judge.Cluster {
 		Q := nlist.NewSafeListLimited(DefaultSendQueueMaxSize)
 		JudgeQueues[node] = Q
 	}

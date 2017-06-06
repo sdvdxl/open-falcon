@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	cmodel "github.com/open-falcon/common/model"
-	cutils "github.com/open-falcon/common/utils"
+	cmodel "github.com/open-falcon/falcon-plus/common/model"
+	cutils "github.com/open-falcon/falcon-plus/common/utils"
 )
 
 type MockCfg struct {
@@ -122,7 +122,7 @@ func getEndpointFromGroups(grps string) []string {
 		}
 
 		hostmap := GetHostsFromGroup(grp)
-		for hostname, _ := range hostmap {
+		for hostname := range hostmap {
 			if hostname != "" {
 				hosts[hostname] = hostname
 			}
@@ -131,7 +131,7 @@ func getEndpointFromGroups(grps string) []string {
 
 	// get host slice
 	ret := make([]string, 0)
-	for key, _ := range hosts {
+	for key := range hosts {
 		ret = append(ret, key)
 	}
 

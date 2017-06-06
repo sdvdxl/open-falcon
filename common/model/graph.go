@@ -2,8 +2,9 @@ package model
 
 import (
 	"fmt"
-	MUtils "github.com/open-falcon/common/utils"
 	"math"
+
+	MUtils "github.com/open-falcon/falcon-plus/common/utils"
 )
 
 // DsType 即RRD中的Datasource的类型：GAUGE|COUNTER|DERIVE
@@ -49,6 +50,17 @@ func (this *GraphItem) UUID() string {
 	return MUtils.UUID(this.Endpoint, this.Metric, this.Tags, this.DsType, this.Step)
 }
 
+type GraphDeleteParam struct {
+	Endpoint string `json:"endpoint"`
+	Metric   string `json:"metric"`
+	Step     int    `json:"step"`
+	DsType   string `json:"dstype"`
+	Tags     string `json:"tags"`
+}
+
+type GraphDeleteResp struct {
+}
+
 // ConsolFun 是RRD中的概念，比如：MIN|MAX|AVERAGE
 type GraphQueryParam struct {
 	Start     int64  `json:"start"`
@@ -56,6 +68,7 @@ type GraphQueryParam struct {
 	ConsolFun string `json:"consolFuc"`
 	Endpoint  string `json:"endpoint"`
 	Counter   string `json:"counter"`
+	Step      int    `json:"step"`
 }
 
 type GraphQueryResponse struct {

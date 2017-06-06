@@ -29,7 +29,6 @@ type JudgeConfig struct {
 	Batch       int                     `json:"batch"`
 	ConnTimeout int                     `json:"connTimeout"`
 	CallTimeout int                     `json:"callTimeout"`
-	PingMethod  string                  `json:"pingMethod"`
 	MaxConns    int                     `json:"maxConns"`
 	MaxIdle     int                     `json:"maxIdle"`
 	Replicas    int                     `json:"replicas"`
@@ -42,7 +41,6 @@ type GraphConfig struct {
 	Batch       int                     `json:"batch"`
 	ConnTimeout int                     `json:"connTimeout"`
 	CallTimeout int                     `json:"callTimeout"`
-	PingMethod  string                  `json:"pingMethod"`
 	MaxConns    int                     `json:"maxConns"`
 	MaxIdle     int                     `json:"maxIdle"`
 	Replicas    int                     `json:"replicas"`

@@ -15,12 +15,13 @@
 package cron
 
 import (
+	"time"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
 	"github.com/open-falcon/falcon-plus/modules/alarm/model"
 	"github.com/open-falcon/falcon-plus/modules/alarm/redi"
 	"github.com/toolkits/net/httplib"
-	"time"
 )
 
 func ConsumeSms() {
@@ -49,7 +50,11 @@ func SendSms(sms *model.Sms) {
 	url := g.Config().Api.Sms
 	r := httplib.Post(url).SetTimeout(5*time.Second, 30*time.Second)
 	r.Param("tos", sms.Tos)
-	r.Param("content", sms.Content)
+	content := sms.Content
+	if g.Config().DC == "" {
+		content += " [" + g.Config().DC + "]"
+	}
+	r.Param("content", content)
 	resp, err := r.String()
 	if err != nil {
 		log.Errorf("send sms fail, tos:%s, cotent:%s, error:%v", sms.Tos, sms.Content, err)

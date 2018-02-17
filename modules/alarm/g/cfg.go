@@ -64,6 +64,7 @@ type HousekeeperConfig struct {
 }
 
 type GlobalConfig struct {
+	DC           string              `json:"dc"`
 	LogLevel     string              `json:"log_level"`
 	FalconPortal *FalconPortalConfig `json:"falcon_portal"`
 	Http         *HttpConfig         `json:"http"`
